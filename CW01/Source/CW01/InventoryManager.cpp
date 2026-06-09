@@ -88,6 +88,16 @@ void AInventoryManager::BeginPlay()
 	Super::BeginPlay();
 	
 	InitItemDatabase();
+	
+	AddItemToBag(1001);  
+	AddItemToBag(1003);  
+
+	UseItem(1001);      
+	UseItem(1003);      
+
+	AcquireTitle(FName("Mage")); 
+
+	UseItem(1003); 
 }
 
 void AInventoryManager::InitItemDatabase()
