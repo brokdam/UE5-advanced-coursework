@@ -31,6 +31,8 @@ public:
 	
 	void AddItemToBag(int32 ItemID);
 	void PrintBag();
+	void AcquireTitle(FName Title);
+	void UseItem(int32 ItemID);
 
 protected:
 	virtual void BeginPlay() override;

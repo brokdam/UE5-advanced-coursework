@@ -44,6 +44,45 @@ void AInventoryManager::PrintBag()
 	}
 }
 
+void AInventoryManager::AcquireTitle(FName Title)
+{
+	AcquiredTitles.Add(Title);
+	
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta,
+		FString::Printf(TEXT("칭호 획득: %s"), *Title.ToString()));
+}
+
+void AInventoryManager::UseItem(int32 ItemID)
+{
+	if (!Bag.Contains(ItemID))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,
+			FString::Printf(TEXT("가방에 없는 아이템: ID %d"), ItemID));
+		return;
+	}
+	
+	FInventoryItemInfo* Info = ItemDatabase.Find(ItemID);
+	if (!Info)
+	{
+		return;
+	}
+	
+	bool bNoTitleNeeded = (Info->RequiredTitle == NAME_None);
+	bool bHasTitle      = AcquiredTitles.Contains(Info->RequiredTitle);
+	
+	if (bNoTitleNeeded || bHasTitle)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,
+			FString::Printf(TEXT("%s 사용 성공!"), *Info->ItemName));
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,
+			FString::Printf(TEXT("%s 사용 불가 : '%s' 칭호가 필요합니다"),
+				*Info->ItemName, *Info->RequiredTitle.ToString()));
+	}
+}
+
 void AInventoryManager::BeginPlay()
 {
 	Super::BeginPlay();
@@ -58,7 +97,7 @@ void AInventoryManager::InitItemDatabase()
 	ItemDatabase.Add(1003, FInventoryItemInfo{ TEXT("Magic Staff"),  300, FName("Mage") });
 	ItemDatabase.Add(1004, FInventoryItemInfo{ TEXT("Health Potion"),30,  NAME_None });
 
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan,
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
 		FString::Printf(TEXT("DB 등록 완료: 아이템 %d종"), ItemDatabase.Num()));
 }
 
